@@ -1,0 +1,35 @@
+containers:
+  build-env:
+    image: docker pull jupyter/datascience-notebook
+    working_directory: /src
+    environment:
+      PYTHONPATH: "/src"
+      PYTHONUSERBASE: "/src/.pip-cache"
+      PIPENV_VENV_IN_PROJECT: true
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
+    volumes:
+      - local: .
+        container: /src
+        options: cached
+      - type: cache
+        container: /src/.pip-cache
+        name: pip-cache
+  
+tasks:
+  ## Run First! tasks
+  dep:
+    description: Run this before doing the python stuff. It installs the dependencies into the local cache.
+    group: Run First! tasks
+    run:
+      container: build-env
+      command: sh -c 'pip install --user -r requirements.txt'
+    
+  ## Utility tasks
+  shell:
+    description: Start a shell in the development environment.
+    group: Utility tasks
+    run:
+      container: build-env
+      command: /bin/sh
