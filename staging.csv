@@ -1,0 +1,10 @@
+,Value,type
+0,1,a
+1,2,b
+2,3,c
+0,3,a
+1,4,b
+,Value,type,source
+0,1,a,data_01_01.csv
+1,2,b,data_01_01.csv
+2,3,c,data_01_01.csv
