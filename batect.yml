@@ -30,7 +30,7 @@ tasks:
       command: sh -c 'pip install --user -r requirements.txt'
     
   ## Utility tasks
-  shell:
+  dev:
     description: Start a shell in the development environment.
     group: Utility tasks
     run:
