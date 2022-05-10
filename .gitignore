@@ -1,5 +1,9 @@
 # Project specific files
 /example_4_full/staging_source_A/*
+!/example_4_full/staging_source_A/.gitkeep
+/example_4_full/staging_source_B/*
+!/example_4_full/staging_source_B/.gitkeep
+
 
 
 # Byte-compiled / optimized / DLL files
