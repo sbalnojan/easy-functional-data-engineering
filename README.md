@@ -1,6 +1,8 @@
 # easy-functional-data-engineering
 A cool simple example of functional data engineering
 
+![Functional Data Warehousing Example 4](Functional_Data_Warehousing.jpg)
+
 ## What is functional data engineering?
 It's the ideas of functional data engineering transferred to data engineering
 with the goal of getting easy to maintain & easy to reproducible data result.
