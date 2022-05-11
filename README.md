@@ -19,8 +19,10 @@ The repository contains two examples of functional data engineering written
 in (very poor!) Python. The idea is to show you the simplest implementations
 of these practices without any distraction or fuss. 
 
-- [Example 1 - making a Python load transform extract functional](Example_1.ipynb)
-- [Example 2 - Encapsulating changing logic into data in Python](Example_2.ipynb)
+- [Example 1 - making a Python load transform extract functional](example_1/Example_1.ipynb)
+- [Example 2 - Encapsulating changing logic into data in Python](example_2/Example_2.ipynb)
+- [Example 4 - Full functional mini datawarehouse](example_3/Example_4.ipynb)
+
 
 ## How to run in my own machine
 If you want to run this on your own machine, you can use *batect*.
