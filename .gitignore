@@ -3,6 +3,10 @@
 !/example_4_full/staging_source_A/.gitkeep
 /example_4_full/staging_source_B/*
 !/example_4_full/staging_source_B/.gitkeep
+/example_4_full/model_sales/*
+!/example_4_full/model_sales/.gitkeep
+/example_4_full/model_users/*
+!/example_4_full/model_users/.gitkeep
 
 
 
