@@ -7,6 +7,8 @@
 !/example_4_full/model_sales/.gitkeep
 /example_4_full/model_users/*
 !/example_4_full/model_users/.gitkeep
+/example_4_full/agg_sales/*
+!/example_4_full/agg_sales/.gitkeep
 
 
 
