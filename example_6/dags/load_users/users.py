@@ -15,7 +15,7 @@ def load_users():
     user_data.fillna({
         'name': 'not known', 
         'status': 'standard'
-    })
+    }, inplace=True)
     user_data.to_csv("processed_data/processed_user_data.csv", index=False)
 
 def load_users_message():
