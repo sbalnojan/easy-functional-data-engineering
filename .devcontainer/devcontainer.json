@@ -13,7 +13,7 @@
             "dockerDashComposeVersion": "v1"
         },
             "java": "latest"
-    }
+    },
 
 	// Configure tool-specific properties.
 	"customizations": {
