@@ -4,6 +4,11 @@
 	"name": "Python 3",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
+	"hostRequirements": {
+	   "cpus": 8,
+	   "memory": "8gb",
+	   "storage": "32gb"
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
