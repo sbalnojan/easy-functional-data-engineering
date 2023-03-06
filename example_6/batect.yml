@@ -1,21 +1,14 @@
 containers:
   build-env:
-    image: jupyter/minimal-notebook #jupyter/datascience-notebook
-#    working_directory: /src
-#    environment:
-#      PYTHONPATH: "/src"
-#      PYTHONUSERBASE: "/src/.pip-cache"
-#      PIPENV_VENV_IN_PROJECT: true
-#    run_as_current_user:
-#      enabled: true
-#      home_directory: /home/container-user
+    image: jupyter/scipy-notebook #jupyter/datascience-notebook
     volumes:
-      - local: .
+      - local: charts
         container: /home/jovyan/work
         options: cached
-#      - type: cache
-#        container: /src/.pip-cache
-#        name: pip-cache
+      - local: imported_data
+        container: /home/jovyan/work/imported_data
+        options: cached
+
     ports:
       - local: 8888
         container: 8888
@@ -27,4 +20,5 @@ tasks:
     group: Utility tasks
     run:
       container: build-env
-      entrypoint: start-notebook.sh
+      entrypoint: start-notebook.sh --ip=0.0.0.0 --allow-root --ServerApp.allow_origin="*" --ServerApp.disable_check_xsrf=True --ServerApp.allow_remote_access=True
+

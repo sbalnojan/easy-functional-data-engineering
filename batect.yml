@@ -35,4 +35,4 @@ tasks:
     group: Utility tasks
     run:
       container: build-env
-      entrypoint: start-notebook.sh
+      entrypoint: start-notebook.sh 
