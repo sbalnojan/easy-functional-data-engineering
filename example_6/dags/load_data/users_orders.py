@@ -10,13 +10,36 @@ from airflow.operators.python import PythonOperator
 dag_path = os.getcwd()
 
 def load_users():
-    user_data = pd.read_csv("/opt/airflow/raw_data/users_v1.csv")
+    user_data = pd.read_csv("/opt/airflow/raw_data/users_day_1.csv")
     user_data.head()
     user_data.fillna({
         'name': 'not known', 
         'status': 'standard'
     }, inplace=True)
-    user_data.to_csv("processed_data/processed_user_data.csv", index=False)
+    user_data.to_csv("processed_data/imported_data/user_data.csv", index=False)
+
+def load_orders():
+    # import new orders
+    order_data = pd.read_csv("/opt/airflow/raw_data/orders_day_1.csv")
+    order_data.head()
+    order_data.fillna({
+        'name': 'not known', 
+        'status': 'standard'
+    }, inplace=True)
+
+    # join to old order data
+    already_imported_order_data = pd.read_csv("/opt/airflow/imported_data/orders.csv")
+
+    result = pd.concat([already_imported_order_data, order_data], ignore_index=True)
+    
+    # safe result as csv
+    result.to_csv("processed_data/imported_data/orders.csv", index=False)
+
+def process_users_orders():
+    user_data = pd.read_csv("/opt/airflow/raw_data/users_day_1.csv")
+    order_data = pd.read_csv("/opt/airflow/imported_data/orders.csv")
+
+
 
 def load_users_message():
     print("done")
