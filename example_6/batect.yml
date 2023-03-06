@@ -1,0 +1,30 @@
+containers:
+  build-env:
+    image: jupyter/minimal-notebook #jupyter/datascience-notebook
+#    working_directory: /src
+#    environment:
+#      PYTHONPATH: "/src"
+#      PYTHONUSERBASE: "/src/.pip-cache"
+#      PIPENV_VENV_IN_PROJECT: true
+#    run_as_current_user:
+#      enabled: true
+#      home_directory: /home/container-user
+    volumes:
+      - local: .
+        container: /home/jovyan/work
+        options: cached
+#      - type: cache
+#        container: /src/.pip-cache
+#        name: pip-cache
+    ports:
+      - local: 8888
+        container: 8888
+  
+tasks:
+  ## Utility tasks
+  dev:
+    description: Start a shell in the development environment.
+    group: Utility tasks
+    run:
+      container: build-env
+      entrypoint: start-notebook.sh
