@@ -11,7 +11,9 @@ containers:
       - local: processed_data
         container: /home/jovyan/work/processed_data
         options: cached
-
+      - local: raw_data
+        container: /home/jovyan/work/raw_data
+        options: cached
     ports:
       - local: 8888
         container: 8888

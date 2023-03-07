@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 # Let's travel to day 2...
 
+cp tmp_data/orders.csv imported_data/orders.csv
 echo "day-1" > raw_data/current_day.txt

@@ -55,11 +55,6 @@ load_users_task = PythonOperator(
 def load_orders():
     # import new orders
     order_data = pd.read_csv(f"/opt/airflow/raw_data/orders_{today}.csv")
-    order_data.head()
-    order_data.fillna({
-        'name': 'not known', 
-        'status': 'standard'
-    }, inplace=True)
 
     # join to old order data
     already_imported_order_data = pd.read_csv("/opt/airflow/imported_data/orders.csv")
