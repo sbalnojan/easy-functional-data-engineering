@@ -50,6 +50,10 @@ our user data is "immutable",that is unchangeable, by never overwriting over cop
 We're using daily imports here, so use the date as identifier for the different data versions by storing a new copy of the user data in
 /imported_data/users/{DATE}/users.csv
 
+You also need to redo the dashboard, to always read the latest folder (you can use the utility function already inside the notebook)...
+
+You also need to change the loading to todays thing... We can recreate the final graph as well (adaptthat one as well!)
+
 **Task 2:**
 Run your DAG, then ./day-2, then your DAG again.
 
