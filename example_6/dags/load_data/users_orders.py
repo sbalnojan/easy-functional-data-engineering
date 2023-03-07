@@ -77,7 +77,7 @@ def process_users_orders():
 
     result = order_data.merge(user_data, on="user_id", how="left") #
 
-    result.groupby("sales_date").sum().reset_index().to_csv("/opt/airflow/processed_data/users.csv")
+    result.groupby(["sales_date","status"]).sum().reset_index().to_csv("/opt/airflow/processed_data/agg_sales.csv")
 # # Our Task
 
 process_users_orders_task = PythonOperator(
