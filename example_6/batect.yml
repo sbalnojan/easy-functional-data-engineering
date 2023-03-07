@@ -8,6 +8,9 @@ containers:
       - local: imported_data
         container: /home/jovyan/work/imported_data
         options: cached
+      - local: processed_data
+        container: /home/jovyan/work/processed_data
+        options: cached
 
     ports:
       - local: 8888
