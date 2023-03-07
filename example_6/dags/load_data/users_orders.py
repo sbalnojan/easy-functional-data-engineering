@@ -38,7 +38,7 @@ def load_users():
         'name': 'not known', 
         'status': 'standard'
     }, inplace=True)
-    user_data.to_csv("processed_data/imported_data/user_data.csv", index=False)
+    user_data.to_csv("/opt/airflow/imported_data/users.csv", index=False)
 
 ## Our Task
 load_users_task = PythonOperator(
@@ -62,7 +62,7 @@ def load_orders():
     result = pd.concat([already_imported_order_data, order_data], ignore_index=True)
     
     # safe result as csv
-    result.to_csv("processed_data/imported_data/orders.csv", index=False)
+    result.to_csv("/opt/airflow/imported_data/orders.csv", index=False)
 #
 # # Our Task
 load_orders_task = PythonOperator(
@@ -72,7 +72,7 @@ load_orders_task = PythonOperator(
 )
 
 def process_users_orders():
-    user_data = pd.read_csv("/opt/airflow/raw_data/users_day_1.csv")
+    user_data = pd.read_csv("/opt/airflow/imported_data/users.csv")
     order_data = pd.read_csv("/opt/airflow/imported_data/orders.csv")
 # # Our Task
 

@@ -67,7 +67,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/raw_data:/opt/airflow/raw_data
     - ${AIRFLOW_PROJ_DIR:-.}/processed_data:/opt/airflow/processed_data
-    - ${AIRFLOW_PROJ_DIR:-.}/processed_data:/opt/airflow/imported_data
+    - ${AIRFLOW_PROJ_DIR:-.}/imported_data:/opt/airflow/imported_data
 
 
   user: "${AIRFLOW_UID:-50000}:0"
