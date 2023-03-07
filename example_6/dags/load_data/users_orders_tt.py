@@ -43,6 +43,11 @@ def load_users():
         'name': 'not known', 
         'status': 'standard'
     }, inplace=True)
+
+    #mkdir if not exist
+    import os  
+    os.makedirs(f"/opt/airflow/imported_data/{today}/", exist_ok=True)  
+
     user_data.to_csv(f"/opt/airflow/imported_data/{today}/users.csv", index=False)
 
 ## Our Task
@@ -77,7 +82,11 @@ def process_users_orders():
 
     result = order_data.merge(user_data, on="user_id", how="left") #
 
-    result.groupby(["sales_date","status"]).sum().reset_index().to_csv(f"/opt/airflow/processed_data/f{today}/agg_sales.csv")
+    #mkdir if not exist
+    import os  
+    os.makedirs(f"/opt/airflow/processed_data/{today}/", exist_ok=True)  
+
+    result.groupby(["sales_date","status"]).sum().reset_index().to_csv(f"/opt/airflow/processed_data/{today}/agg_sales.csv")
 # # Our Task
 
 process_users_orders_task = PythonOperator(
