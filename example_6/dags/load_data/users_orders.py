@@ -74,6 +74,10 @@ load_orders_task = PythonOperator(
 def process_users_orders():
     user_data = pd.read_csv("/opt/airflow/imported_data/users.csv")
     order_data = pd.read_csv("/opt/airflow/imported_data/orders.csv")
+
+    result = order_data.merge(user_data, on="user_id", how="left") #
+
+    result.groupby("sales_date").sum().reset_index().to_csv("/opt/airflow/processed_data/users.csv")
 # # Our Task
 
 process_users_orders_task = PythonOperator(
