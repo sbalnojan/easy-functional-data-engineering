@@ -59,6 +59,7 @@ Run your DAG, then ./day-2, then your DAG again.
 
 Outcome 1: The dashboard still looks the same. But you are now able to investigate the problem by viewing the data version from yesterday.
 
+Outcome 2: You can now investigate inside the notebook (display today and yesterday, and then the same for the user data.).
 CODE
 
 Insight: The immutable staged user data allows you to reproduce any state of data. It reveals, in this case, that the dashboard isn't showing 
@@ -66,7 +67,7 @@ Insight: The immutable staged user data allows you to reproduce any state of dat
 to status at the time of order".
 
 ## Day 3: orders!##
-Run ./day-passes again to get to day 3. 
+Run ./day-3 again to get to day 3. 
 
 Look at the dashboard again. The result looks odd! How you'd wish you could just change the data back to yesterdays version right?
 
@@ -76,7 +77,7 @@ Let's time travel and build this ability.
 
  - (./day-2)
  - put orders into imported_orders/{DATE}/orders.csv
- - Create an aggregated sales model, keep the import date.
+ - UPDATE THE SALES MODEL, by joining all orders together... Create an aggregated sales model, keep the import date!
 
 
 **Task 2: Roll Back**
