@@ -7,7 +7,12 @@ import os
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 
+# a bit of time travel magic, get date for today..
 dag_path = os.getcwd()
+date_file = open("/opt/airflow/raw_data/current_day.txt", "r")
+today = date_file.readline()
+
+
 
 ## Our DAG
 user_data_dag = DAG(
@@ -32,7 +37,7 @@ start_import_task = PythonOperator(
 )
 
 def load_users():
-    user_data = pd.read_csv("/opt/airflow/raw_data/users_day_1.csv")
+    user_data = pd.read_csv(F"/opt/airflow/raw_data/users_{today}.csv")
     user_data.head()
     user_data.fillna({
         'name': 'not known', 
@@ -49,7 +54,7 @@ load_users_task = PythonOperator(
 
 def load_orders():
     # import new orders
-    order_data = pd.read_csv("/opt/airflow/raw_data/orders_day_1.csv")
+    order_data = pd.read_csv(f"/opt/airflow/raw_data/orders_{today}.csv")
     order_data.head()
     order_data.fillna({
         'name': 'not known', 
