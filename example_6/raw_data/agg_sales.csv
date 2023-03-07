@@ -1,0 +1,7 @@
+,sales_date,status,quantity,revenue,user_id
+0,2022-01-01, premium,40,200,30
+1,2022-01-01, standard,30,150,30
+2,2022-01-02, premium,40,270,30
+3,2022-01-02, standard,30,190,30
+2,2022-01-03, premium,40,370,30
+3,2022-01-03, standard,30,590,30

@@ -10,7 +10,7 @@ from airflow.operators.python import PythonOperator
 # a bit of time travel magic, get date for today..
 dag_path = os.getcwd()
 date_file = open("/opt/airflow/raw_data/current_day.txt", "r")
-today = date_file.readline()
+today = date_file.readline().strip()
 
 
 
