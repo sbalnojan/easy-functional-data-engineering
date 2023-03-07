@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Let's travel to day 2...
+
+echo "2023-01-01" > current_day.txt

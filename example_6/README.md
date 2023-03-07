@@ -23,7 +23,6 @@ For second tut:
 We're going to make pasta. With sauce. We're producing two outcomes here, with a few ingredients each.
 
 
-
 ### Day1 : Base Setup###
 
 - We got one chart showing order volume/day, segmented by "status".
