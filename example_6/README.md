@@ -1,4 +1,4 @@
-echo -e "AIRFLOW_UID=$(id -u)" > .env
+echo -e "AIRFLOW_UID=$(id -u)" > .env (# or maybe I don't even need this...)
 docker-compose up airflow-init
 docker-compose up
 
