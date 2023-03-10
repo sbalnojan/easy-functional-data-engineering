@@ -130,7 +130,7 @@ to status at the time of order".
 
 ## Let's look at the orders now ##
 
-1. Run ./day-3 to get to day 3. 
+1. Run ./day-3 to get to day 3. Trigger the DAG again.
 
 2. Look at the dashboard again. The result looks odd on both charts this time! There obviously is some kind of fake/test order inside the system. Puh I wish there was an easy way, just like for the user data, to roll back everything to yesterday, right?
 
@@ -156,6 +156,31 @@ This is pretty standard, import new orders, append to old orders, save result.
 **Solution:** So let us implement functional data engineering here to get reproducibility of yesterdays results while still keeping the current state for analysis and the incremental load that is commonly used for such immutable data.
 
 ## Make the order import reproducible ##
+
+1. Travel back in time to day 2 by calling
+
+```./day-2````
+
+2. Adapt the task ```load_orders``` to put each order import into a separate timestamped folder:
+```imported_orders/{DATE}/orders.csv````
+
+```python
+def load_orders():
+    # import new orders
+    order_data = pd.read_csv(f"/opt/airflow/raw_data/orders_{today}.csv")
+ 
+    # safe import 
+    order_data.to_csv(f"/opt/airflow/imported_data/{today}/orders.csv", index=False)
+
+
+    # join to old order data to create a complete "view"
+    already_imported_order_data = pd.read_csv("/opt/airflow/processed_data/orders.csv")
+
+    result = pd.concat([already_imported_order_data, order_data], ignore_index=True)
+    
+    # safe result as timestamped (!) csv
+    result.to_csv(f"/opt/airflow/processed_data/orders_{today}.csv", index=False)
+```
 
 
 
