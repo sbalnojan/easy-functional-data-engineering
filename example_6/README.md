@@ -29,52 +29,90 @@ INCLUDE mini GIF of going from "what data changed? I have no idea to => let me q
 
 <img src="dashboard_01.png" width="400px" />
 
+## Let's hit a problem with the user import
+Everything is looking good right? Let us progress to the next day then.
 
-###
+1. Run ```./day-2```, then trigger the DAG again.
+2. Then refresh the dashboard. You get a new data point for the line chart, but also something strange happens. Data from yesterday will change.
 
-Plan:
-1. Full import Users
-2. Incremental import Orders
+<img src="dashboard_02.png" width="400px" />
 
-Do three things for FDE:
-1. Handle time stamped order stuff (before just append, then partition)
-2. Handle full import of users (partition)
-3. Add a view on top..
+How is that possible? The order import just appends orders, so it cannot "change data from yesterday".
 
-For second tut:
-1. Handle late arriving facts
-2. Use tax example to keep logic in data.
+3. But take a look into the code for the user import. [users_orders.py](dags/load_data/users_orders.py):
+```python
+def load_users():
+    user_data = pd.read_csv(F"/opt/airflow/raw_data/users_{today}.csv")
+    user_data.head()
+    user_data.fillna({
+        'name': 'not known', 
+        'status': 'standard'
+    }, inplace=True)
+    user_data.to_csv("/opt/airflow/imported_data/users.csv", index=False)
 
-## Functional Data Engineering Tutorial
-We're going to make pasta. With sauce. We're producing two outcomes here, with a few ingredients each.
+```
+The third line does some cleaning, and the final line saves the new user state, overwriting the old state. 
+
+**Problem:** This is common practice. The user "source" doesn't provide any kind of dates, and we do need the current state of users to do analytical work. But that means we won't be able to figure out our problem. 
+
+**Solution:** So let us implement functional data engineering here to get reproducibility of yesterdays results while still keeping the current state for analysis.
+
+## Making users immutable ##
+
+1. Turn time back to yesterday by running ```./day-1```
+2. Adapt the DAG [users_orders.py](dags/load_data/users_orders.py) to save user data each day to a new file. Use the path ```/imported_data/users/{DATE}/users.csv```.  Use the supplied variable ```today``` to make this happen.
+
+```python 
+    user_data = pd.read_csv(F"/opt/airflow/raw_data/users_{today}.csv")
+    user_data.head()
+    user_data.fillna({
+        'name': 'not known', 
+        'status': 'standard'
+    }, inplace=True)
+
+    #mkdir if not exist
+    import os  
+    os.makedirs(f"/opt/airflow/imported_data/{today}/", exist_ok=True)  
+
+    user_data.to_csv(f"/opt/airflow/imported_data/{today}/users.csv", index=False)
+
+```
+We're creating the directory if it doesn't yet exist, and  use the ```today``` variable to get todays date, and then place todays user state into this directory.
 
 
-### Day1 : Base Setup###
+3. Our DAG doesn't end at the import however. So you also need to add the timestamp to the next part of the dag, the task ```process_user_orders```:
 
-- We got one chart showing order volume/day, segmented by "status".
+```python
+def process_users_orders():
+    user_data = pd.read_csv(f"/opt/airflow/imported_data/{today}/users.csv")
+    order_data = pd.read_csv("/opt/airflow/imported_data/orders.csv")
 
-**Task 1:**
-- Use airflow (trigger the workflow) to see that it imports and works.
+    result = order_data.merge(user_data, on="user_id", how="left") #
 
-## Day 2:##
-**Task 2:**
-- Now please run ./day-passes to let "a day pass", then run our workflow again, and take a look at the chart.
+    #mkdir if not exist
+    import os  
+    os.makedirs(f"/opt/airflow/processed_data/{today}/", exist_ok=True)  
 
-You now should be concerned! At least the user of the graph would. Something seems broken...
+    result.groupby(["sales_date","status"]).sum().reset_index().to_csv(f"/opt/airflow/processed_data/{today}/agg_sales.csv")
 
-[PIC compare yesterday to today..]
+```
+We're using the same logic here. Use the date of today, create the directory if it doesn't exist yet and then store the results  into a new directory.
 
-What happened? We don't know! How would we know? We don't have the state of the data yesterday.
 
-Let's change this...
+4. Now run our new DAG!
 
-### Making users "immutable"
-We're going to turn back the time to yesterday (./day-1) and make sure,
-our user data is "immutable",that is unchangeable, by never overwriting over copy of it, but always storing a new one.
+4. Next adapt the dashboard to use todays state.
+
+```python 
+sales = pd.read_csv(f"processed_data/{today}/agg_sales.csv", header=0)
+``` 
+
+5. Now refresh your dashboard, just to be sure that it works. 
+
+
 
 **Task 1:**
 We're using daily imports here, so use the date as identifier for the different data versions by storing a new copy of the user data in
-/imported_data/users/{DATE}/users.csv
 
 You also need to redo the dashboard, to always read the latest folder (you can use the utility function already inside the notebook)...
 
@@ -115,3 +153,24 @@ Let's time travel and build this ability.
  - ..
  - ..
 
+
+
+
+
+
+---
+Plan:
+1. Full import Users
+2. Incremental import Orders
+
+Do three things for FDE:
+1. Handle time stamped order stuff (before just append, then partition)
+2. Handle full import of users (partition)
+3. Add a view on top..
+
+For second tut:
+1. Handle late arriving facts
+2. Use tax example to keep logic in data.
+
+## Functional Data Engineering Tutorial
+We're going to make pasta. With sauce. We're producing two outcomes here, with a few ingredients each.
