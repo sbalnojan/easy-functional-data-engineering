@@ -129,10 +129,15 @@ sales = pd.read_csv(f"processed_data/{yesterday}/agg_sales.csv", header=0)
 "order volume by status" but rather "order volume attributed to current status". What probably is more appropriate is "order volume attributed
 to status at the time of order".
 
-## Day 3: orders!##
-Run ./day-3 again to get to day 3. 
+## Let's look at the orders now ##
 
-Look at the dashboard again. The result looks odd! How you'd wish you could just change the data back to yesterdays version right?
+1. Run ./day-3 to get to day 3. 
+
+2. Look at the dashboard again. The result looks odd! There obviously is some kind of fake/test order inside the system. Puh I wish there was an easy way, just like for the user data, to roll back everything to yesterday, right?
+
+3. Let's do some more work 
+
+
 
 Let's time travel and build this ability.
 
