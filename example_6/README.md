@@ -15,9 +15,8 @@ INCLUDE mini GIF of going from "what data changed? I have no idea to => let me q
 
 ## Let's get started
 
-1. Run ```docker-compose up airflow-init``` to initialize the db.
-2. Run ```docker-compose up``` to open up airflow (on start up, jupyter_1 will dump a token, copy it for the next step!)
-3. Run ```./day-1``` to set the time to day 1. Open up: http://localhost:8080 (pwd and users: airflow/airflow).
+1. Run ```./go``` to get started
+
 
 ## Inspect & run the DAG
 1. Take a look at the dag "user_data_dag". It imports orders & users from the sources. 
@@ -37,9 +36,9 @@ Everything is looking good right? Let us progress to the next day then.
 
 <img src="dashboard_02.png" width="400px" />
 
-How is that possible? The order import just appends orders, so it cannot "change data from yesterday".
+How is that possible? The order import just appends orders, so it cannot "change data from yesterday". As you can see, the order chart did not change its data from yesterday. So the problem must be in the user data.
 
-3. But take a look into the code for the user import. [users_orders.py](dags/load_data/users_orders.py):
+3. Take a look into the code for the user import. [users_orders.py](dags/load_data/users_orders.py):
 ```python
 def load_users():
     user_data = pd.read_csv(F"/opt/airflow/raw_data/users_{today}.csv")
@@ -133,9 +132,32 @@ to status at the time of order".
 
 1. Run ./day-3 to get to day 3. 
 
-2. Look at the dashboard again. The result looks odd! There obviously is some kind of fake/test order inside the system. Puh I wish there was an easy way, just like for the user data, to roll back everything to yesterday, right?
+2. Look at the dashboard again. The result looks odd on both charts this time! There obviously is some kind of fake/test order inside the system. Puh I wish there was an easy way, just like for the user data, to roll back everything to yesterday, right?
 
-3. Let's do some more work 
+3. Take a look into the order import:
+```python
+def load_orders():
+    # import new orders
+    order_data = pd.read_csv(f"/opt/airflow/raw_data/orders_{today}.csv")
+
+    # join to old order data
+    already_imported_order_data = pd.read_csv("/opt/airflow/imported_data/orders.csv")
+
+    result = pd.concat([already_imported_order_data, order_data], ignore_index=True)
+    
+    # safe result as csv
+    result.to_csv("/opt/airflow/imported_data/orders.csv", index=False)
+```
+
+This is pretty standard, import new orders, append to old orders, save result. 
+
+**Problem:** This is common practice. The order data is assumed to be immutable, so we simply append new ones. Out of the box this means, we still don't have "yesterdays state of the data" as we now do for the users.
+
+**Solution:** So let us implement functional data engineering here to get reproducibility of yesterdays results while still keeping the current state for analysis and the incremental load that is commonly used for such immutable data.
+
+## Make the order import reproducible ##
+
+
 
 
 
