@@ -281,5 +281,17 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+  jupyter:
+    image: jupyter/scipy-notebook #jupyter/datascience-notebook
+    volumes:
+      - ./charts:/home/jovyan/work
+      - ./imported_data:/home/jovyan/work/imported_data
+      - ./processed_data:/home/jovyan/work/processed_data
+      - ./raw_data:/home/jovyan/work/raw_data
+    ports:
+      - 8888:8888
+    entrypoint: start-notebook.sh --ip=0.0.0.0 --allow-root --ServerApp.allow_origin="*" --ServerApp.disable_check_xsrf=True --ServerApp.allow_remote_access=True
+
+
 volumes:
   postgres-db-volume:
