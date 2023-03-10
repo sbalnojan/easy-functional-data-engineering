@@ -99,7 +99,7 @@ def process_users_orders():
 We're using the same logic here. Use the date of today, create the directory if it doesn't exist yet and then store the results  into a new directory.
 
 
-4. Now run our new DAG!
+4. Now run our new DAG, then run ```./day-2``` to travel forth in time again, and run the DAG again. Take a look at the [imported_data](/imported_data) folder to make sure you now got nicely time partitioned data.
 
 4. Next adapt the dashboard to use todays state.
 
@@ -109,24 +109,23 @@ sales = pd.read_csv(f"processed_data/{today}/agg_sales.csv", header=0)
 
 5. Now refresh your dashboard, just to be sure that it works. 
 
+6. Still the same problem right? Yes! But now you can travel back in time. Just replace the one variable to "yesterday":
 
+```python
+yesterday="day-1"
 
-**Task 1:**
-We're using daily imports here, so use the date as identifier for the different data versions by storing a new copy of the user data in
+sales = pd.read_csv(f"processed_data/{yesterday}/agg_sales.csv", header=0)
+```
 
-You also need to redo the dashboard, to always read the latest folder (you can use the utility function already inside the notebook)...
+7. Now you can go on to investigate the problem, just load both user data sets and compare them to figure out the problem.
 
-You also need to change the loading to todays thing... We can recreate the final graph as well (adaptthat one as well!)
+<img src="dashboard_03.png" width="400px" />
 
-**Task 2:**
-Run your DAG, then ./day-2, then your DAG again.
+**Outcome 1:** The dashboard still looks the same. But you are now able to investigate the problem by viewing the data version from yesterday.
 
-Outcome 1: The dashboard still looks the same. But you are now able to investigate the problem by viewing the data version from yesterday.
+**Outcome 2:** You can now investigate inside the notebook (display today and yesterday, and then the same for the user data.).
 
-Outcome 2: You can now investigate inside the notebook (display today and yesterday, and then the same for the user data.).
-CODE
-
-Insight: The immutable staged user data allows you to reproduce any state of data. It reveals, in this case, that the dashboard isn't showing 
+**Insight:** The immutable staged user data allows you to reproduce any state of data. It reveals, in this case, that the dashboard isn't showing 
 "order volume by status" but rather "order volume attributed to current status". What probably is more appropriate is "order volume attributed
 to status at the time of order".
 
