@@ -49,7 +49,7 @@ Everything is looking good right? Let us progress to the next day then.
 
 <img src="dashboard_02.png" width="400px" />
 
-How is that possible? The order import just appends orders, so it cannot "change data from yesterday". As you can see, the order chart did not change its data from yesterday. So the problem must be in the user data.
+How is that possible? The order import just appends orders, so it cannot "change data from yesterday". Take a look for yourself, there is an "orders" chart inside the same notebook. So the problem must be in the user data.
 
 3. Take a look into the code for the user import. [users_orders.py](dags/load_data/users_orders.py):
 ```python
@@ -63,16 +63,18 @@ def load_users():
     user_data.to_csv("/opt/airflow/imported_data/users.csv", index=False)
 
 ```
-The third line does some cleaning, and the final line saves the new user state, overwriting the old state. 
+The third command does some cleaning, and the final command saves the new user state, overwriting the old state. 
 
-**Problem:** This is common practice. The user "source" doesn't provide any kind of dates, and we do need the current state of users to do analytical work. But that means we won't be able to figure out our problem. 
+**Problem:** This is common practice. The user "source" doesn't provide any kind of dates, and we do need the current state of users to do analytical work. So we get the current state, and overwrite our data. But that means we won't be able to look back at yesterdays data.
 
-**Solution:** So let us implement functional data engineering here to get reproducibility of yesterdays results while still keeping the current state for analysis.
+**Solution:** So let us implement functional data engineering here to get reproducibility of yesterdays results while still keeping the current state for analysis. We do this by making our data import immutable, by always writing to a new "time partition".
 
-## Making users immutable ##
+---
+
+## (3) Making users immutable ##
 
 1. Turn time back to yesterday by running ```./day-1```
-2. Adapt the DAG [users_orders.py](dags/load_data/users_orders.py) to save user data each day to a new file. Use the path ```/imported_data/users/{DATE}/users.csv```.  Use the supplied variable ```today``` to make this happen.
+2. Adapt the DAG [users_orders.py](dags/load_data/users_orders.py) to save user data each day to a new file. Use the path ```/imported_data/users/{today}/users.csv```.  Use the supplied helper variable ```today``` to make this happen.
 
 ```python 
     user_data = pd.read_csv(F"/opt/airflow/raw_data/users_{today}.csv")
@@ -89,7 +91,7 @@ The third line does some cleaning, and the final line saves the new user state, 
     user_data.to_csv(f"/opt/airflow/imported_data/{today}/users.csv", index=False)
 
 ```
-We're creating the directory if it doesn't yet exist, and  use the ```today``` variable to get todays date, and then place todays user state into this directory.
+We're creating the directory if it doesn't yet exist, and use the ```today``` variable to get todays date, and then place todays user state into this directory.
 
 
 3. Our DAG doesn't end at the import however. So you also need to add the timestamp to the next part of the dag, the task ```process_user_orders```:
@@ -111,7 +113,7 @@ def process_users_orders():
 We're using the same logic here. Use the date of today, create the directory if it doesn't exist yet and then store the results  into a new directory.
 
 
-4. Now run our new DAG, then run ```./day-2``` to travel forth in time again, and run the DAG again. Take a look at the [imported_data](/imported_data) folder to make sure you now got nicely time partitioned data.
+4. Now run our new DAG, then run ```./day-2``` to travel forth in time, and run the DAG again. Take a look at the [imported_data](/imported_data) folder to make sure you now got nicely time partitioned data.
 
 4. Next adapt the dashboard to use todays state.
 
@@ -141,9 +143,11 @@ sales = pd.read_csv(f"processed_data/{yesterday}/agg_sales.csv", header=0)
 "order volume by status" but rather "order volume attributed to current status". What probably is more appropriate is "order volume attributed
 to status at the time of order".
 
-## Let's look at the orders now ##
+---
 
-1. Run ./day-3 to get to day 3. Trigger the DAG again.
+## (4) Let's look at the orders now ##
+
+1. Run ```./day-3``` to get to day 3. Trigger the DAG again.
 
 2. Look at the dashboard again. The result looks odd on both charts this time! There obviously is some kind of fake/test order inside the system. Puh I wish there was an easy way, just like for the user data, to roll back everything to yesterday, right?
 
@@ -168,14 +172,16 @@ This is pretty standard, import new orders, append to old orders, save result.
 
 **Solution:** So let us implement functional data engineering here to get reproducibility of yesterdays results while still keeping the current state for analysis and the incremental load that is commonly used for such immutable data.
 
-## Make the order import reproducible ##
+---
+
+## (5) Make the order import reproducible ##
 
 1. Travel back in time to day 2 by calling
 
-```./day-2````
+```./day-2```
 
 2. Adapt the task ```load_orders``` to put each order import into a separate timestamped folder:
-```imported_orders/{DATE}/orders.csv````
+```imported_orders/{today}/orders.csv```
 
 ```python
 def load_orders():
@@ -194,8 +200,6 @@ def load_orders():
     # safe result as timestamped (!) csv
     result.to_csv(f"/opt/airflow/processed_data/orders_{today}.csv", index=False)
 ```
-
-
 
 
 
@@ -218,23 +222,11 @@ Let's time travel and build this ability.
  - ..
 
 
-
-
-
-
 ---
-Plan:
-1. Full import Users
-2. Incremental import Orders
 
-Do three things for FDE:
-1. Handle time stamped order stuff (before just append, then partition)
-2. Handle full import of users (partition)
-3. Add a view on top..
+
+## Reserved for the next tutorial
 
 For second tut:
-1. Handle late arriving facts
-2. Use tax example to keep logic in data.
-
-## Functional Data Engineering Tutorial
-We're going to make pasta. With sauce. We're producing two outcomes here, with a few ingredients each.
+1. Handle late arriving facts (hello updated order/ order status)
+2. Keeping logic inside of data (hello tax rates)
