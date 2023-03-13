@@ -237,28 +237,20 @@ sales_ts.plot.line(y="revenue", x="sales_date")
 6. Finally, roll back your data to yesterday, until the problematic data is fixed, by simply overwriting the deployed time partition. Do so by putting
 "day-2" into the file [current_day.txt](raw_data/current_day.txt). Reload the dashboard, and enjoy!
 
-**Task 1: Aggregate**
+**Outcome 1:** The dashboard is fine. And that with a simple change of a file.
 
- - (./day-2)
- - put orders into imported_orders/{DATE}/orders.csv
- - UPDATE THE SALES MODEL, by joining all orders together... Create an aggregated sales model, keep the import date!
+**Outcome 2:** You can now investigate inside the notebook (display today and yesterday, and then the same for the user data.), for every single data no matter in what processing stage.
 
+**Insight:** The immutable staged order data allows you to reproduce any state of data fast! You just need to change a simple line that stores the deployed "view" and that's it.
 
-**Task 2: Roll Back**
- - Create a "view" to see all orders till date X by using the "current file" (store currently deployed data version).
- - I've taken the liberty to already put a "./roll-back script"
+---
 
- **Play it again**
- - ..
- - ..
- - ..
-
+*If you're still just reading this, I strongly recommend to try it out. I've made an effort to make this as accesible as possible, so go for it!*
 
 ---
 
 
-## Reserved for the next tutorial
+### Reserved for the next tutorial
 
-For second tut:
 1. Handle late arriving facts (hello updated order/ order status)
 2. Keeping logic inside of data (hello tax rates)
