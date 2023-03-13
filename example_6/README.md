@@ -12,8 +12,6 @@ Convert a regular data pipeline to a functional one in two simple steps.
 - Solve "immutability of incrementally loaded data" via functional data engineering.
 - Get excited about the benefits of functional data engineering.
 
-[INCLUDE mini GIF of going from "what data changed? I have no idea to => let me quickly check yesterdays data, => ]
-
 ## Let's get started
 
 0. Open up a new codespace.
