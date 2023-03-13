@@ -2,5 +2,6 @@
 # Let's travel to day 2...
 
 cp tmp_data/orders.csv imported_data/orders.csv
+cp tmp_data/orders.csv processed_data/orders.csv
 cp tmp_data/agg_sales.csv processed_data/agg_sales.csv
 echo "day-1" > raw_data/current_day.txt

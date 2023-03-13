@@ -1,6 +1,7 @@
 
-<img src="blank_lambda.png" width="400px" />
+<img src="FDE.png"  />
 
+*Like this? =====> **Star it & share it!** And check out [Three Data Point Thursday - the newsletter for this kind of stuff](https://thdpth.substack.com/).*
 # Functional Data Engineering with Python/Airflow Tutorial #
 Experience the benefits of functional data engineering first hand in a simple Airflow & Python based Setup.
 Convert a regular data pipeline to a functional one in two simple steps.
@@ -21,7 +22,7 @@ Convert a regular data pipeline to a functional one in two simple steps.
 
 Once inside codespaces: 
 
-1. Run ```./go``` to get started
+1. Run ```./go``` to get started. (This takes a second. Copy out the Jupyter token once you see it.)
 
 *If it doesn't work: Look inside the "go" file. If you don't want to work within the browser, feel free to clone and use ./go anyways.
 In that case, you'll need docker.* 
@@ -29,13 +30,13 @@ In that case, you'll need docker.*
 ---
 
 ## (1) Inspect & run the DAG
-0. Run ``` ./day-1 ``` to start our working day.
+0. Open up a second terminal. Run ``` ./day-1 ``` to start our working day. Open up Airflow at port 8080 (user airflow; pwd airflow)
 1. Take a look at the dag "user_data_dag" inside [users_orders.py](example_6/dags/load_data/users_orders.py). It imports orders & users from the sources. 
 
 <img src="dag_01.png" width="400px" />
 
 2. Trigger a DAG run (it should succeed), and then open up Jupyter at port 8888 (you get the token in the docker-compose start).
-3. Open up the work/order_status_chart.ipynb notebook and take a look at the dashboard. Sales in both segments are growing slightly.
+3. Open up the work/order_status_chart.ipynb notebook, refresh everything, and take a look at the dashboard. Sales in both segments are growing slightly.
 
 <img src="dashboard_01.png" width="400px" />
 
@@ -151,6 +152,8 @@ to status at the time of order".
 
 2. Look at the dashboard again. The result looks odd on both charts this time! There obviously is some kind of fake/test order inside the system. Puh I wish there was an easy way, just like for the user data, to roll back everything to yesterday, right?
 
+<img src="dashboard_04.png" width="400px" />
+
 3. Take a look into the order import:
 ```python
 def load_orders():
@@ -176,9 +179,9 @@ This is pretty standard, import new orders, append to old orders, save result.
 
 ## (5) Make the order import reproducible ##
 
-1. Travel back in time to day 2 by calling
+1. Travel back in time to day 1 by calling
 
-```./day-2```
+```./day-1```
 
 2. Adapt the task ```load_orders``` to put each order import into a separate timestamped folder:
 ```imported_orders/{today}/orders.csv```
@@ -187,23 +190,52 @@ This is pretty standard, import new orders, append to old orders, save result.
 def load_orders():
     # import new orders
     order_data = pd.read_csv(f"/opt/airflow/raw_data/orders_{today}.csv")
- 
-    # safe import 
-    order_data.to_csv(f"/opt/airflow/imported_data/{today}/orders.csv", index=False)
 
+    import os  
+    # safe import 
+    # mkdir if not exist
+    os.makedirs(f"/opt/airflow/imported_data/{today}/", exist_ok=True)  
+    order_data.to_csv(f"/opt/airflow/imported_data/{today}/orders.csv", index=False)
 
     # join to old order data to create a complete "view"
     already_imported_order_data = pd.read_csv("/opt/airflow/processed_data/orders.csv")
 
     result = pd.concat([already_imported_order_data, order_data], ignore_index=True)
     
-    # safe result as timestamped (!) csv
-    result.to_csv(f"/opt/airflow/processed_data/orders_{today}.csv", index=False)
+    # safe result as view and as timestamped view (in real life, just make your VIEW walk through the dirs.)
+    result.to_csv(f"/opt/airflow/processed_data/orders.csv", index=False)
+    
+    os.makedirs(f"/opt/airflow/processed_data/{today}/", exist_ok=True)  
+    result.to_csv(f"/opt/airflow/processed_data/{today}/orders.csv", index=False)
+```
+
+Second, use any Python magic to create a "view" of the current status quo and store it timestamped as well. 
+
+Third, adapt the aggregation task
+```python
+def process_users_orders():
+    user_data = pd.read_csv(f"/opt/airflow/imported_data/{today}/users.csv")
+    order_data = pd.read_csv(f"/opt/airflow/processed_data/{today}/orders.csv") #<= this line is changed
 ```
 
 
+3. Now run the DAG, travel to day-2, DAG, travel to day-3, DAG.
 
-Let's time travel and build this ability.
+4. Take a look at the [imported_data](/imported_data) folder to make sure you now got nicely time partitioned data for orders as well this time.
+
+5. Adapt the dashboard chart for the orders to take the time partitioned data.
+
+```python
+# Read order data
+sales = pd.read_csv(f"processed_data/{today}/orders.csv", header=0)
+sales_ts = sales.groupby("sales_date", group_keys=True).sum().reset_index()
+sales_ts.plot.line(y="revenue", x="sales_date")
+
+```
+
+
+6. Finally, roll back your data to yesterday, until the problematic data is fixed, by simply overwriting the deployed time partition. Do so by putting
+"day-2" into the file [current_day.txt](raw_data/current_day.txt). Reload the dashboard, and enjoy!
 
 **Task 1: Aggregate**
 

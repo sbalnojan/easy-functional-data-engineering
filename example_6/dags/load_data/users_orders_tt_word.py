@@ -55,18 +55,23 @@ load_users_task = PythonOperator(
 def load_orders():
     # import new orders
     order_data = pd.read_csv(f"/opt/airflow/raw_data/orders_{today}.csv")
- 
-    # safe import 
-    order_data.to_csv(f"/opt/airflow/imported_data/{today}/orders.csv", index=False)
 
+    import os  
+    # safe import 
+    # mkdir if not exist
+    os.makedirs(f"/opt/airflow/imported_data/{today}/", exist_ok=True)  
+    order_data.to_csv(f"/opt/airflow/imported_data/{today}/orders.csv", index=False)
 
     # join to old order data to create a complete "view"
     already_imported_order_data = pd.read_csv("/opt/airflow/processed_data/orders.csv")
 
     result = pd.concat([already_imported_order_data, order_data], ignore_index=True)
     
-    # safe result as timestamped (!) csv
-    result.to_csv(f"/opt/airflow/processed_data/orders_{today}.csv", index=False)
+    # safe result as view and as timestamped view (in real life, just make your VIEW walk through the dirs.)
+    result.to_csv(f"/opt/airflow/processed_data/orders.csv", index=False)
+    
+    os.makedirs(f"/opt/airflow/processed_data/{today}/", exist_ok=True)  
+    result.to_csv(f"/opt/airflow/processed_data/{today}/orders.csv", index=False)
 
 # # Our Task
 load_orders_task = PythonOperator(
@@ -77,9 +82,15 @@ load_orders_task = PythonOperator(
 
 def process_users_orders():
     user_data = pd.read_csv(f"/opt/airflow/imported_data/{today}/users.csv")
+    order_data = pd.read_csv(f"/opt/airflow/processed_data/{today}/orders.csv")
 
+    result = order_data.merge(user_data, on="user_id", how="left") #
 
-    result.groupby(["sales_date","status"]).sum().reset_index().to_csv(f"/opt/airflow/processed_data/f{today}/agg_sales.csv")
+    #mkdir if not exist
+    import os  
+    os.makedirs(f"/opt/airflow/processed_data/{today}/", exist_ok=True)  
+
+    result.groupby(["sales_date","status"]).sum().reset_index().to_csv(f"/opt/airflow/processed_data/{today}/agg_sales.csv")
 # # Our Task
 
 process_users_orders_task = PythonOperator(
