@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-# Let's travel to day 2...
-
-echo "day-3" > raw_data/current_day.txt

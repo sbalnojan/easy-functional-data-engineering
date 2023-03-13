@@ -10,7 +10,7 @@
 /example_4_full/agg_sales/*
 !/example_4_full/agg_sales/.gitkeep
 
-
+tmp/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

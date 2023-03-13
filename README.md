@@ -11,8 +11,7 @@ For the rest I can only refer to Maxime Beauchemin:
 - [Functional Data Engineering](https://maximebeauchemin.medium.com/functional-data-engineering-a-modern-paradigm-for-batch-data-processing-2327ec32c42a)
 - [A talk by Max on the topic](https://www.youtube.com/watch?v=4Spo2QRTz1k)
 - [Another talk by Max on FDE](https://www.youtube.com/watch?v=shW8iQedAXA)
-- Finally this video for a deeper look into [functional data engineering & Python] 
-(https://speakerdeck.com/ongchinhwee/designing-functional-data-pipelines-for-reproducibility-and-maintainability?slide=76)
+- Finally this video for a deeper look into [functional data engineering & Python](https://speakerdeck.com/ongchinhwee/designing-functional-data-pipelines-for-reproducibility-and-maintainability?slide=76).
 
 ## What we got here?
 The repository contains two examples of functional data engineering written 
@@ -22,7 +21,7 @@ of these practices without any distraction or fuss.
 - [Example 1 - making a Python load transform extract functional](example_1/Example_1.ipynb)
 - [Example 2 - Encapsulating changing logic into data in Python](example_2/Example_2.ipynb)
 - [Example 4 - Full functional mini data warehouse](example_4_full/Example_4.ipynb)
-
+- I've set up another great complete tutorial using [Airflow and Python here](https://github.com/sbalnojan/FDE-airflow-tutorial)
 
 ## How to run in my own machine
 If you want to run this on your own machine, you can use *batect*.
