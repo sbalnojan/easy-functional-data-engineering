@@ -6,29 +6,42 @@ Experience the benefits of functional data engineering first hand in a simple Ai
 Convert a regular data pipeline to a functional one in two simple steps.
 
 ## What's in it
-- Super simple setup, use the supplied devcontainer in your local codespaces, open up GitHub or use the dockerized setup.
-- See two typical problems solved by functional data engineering
-- Experience how to handle stateful and immutable data differently.
+- Super simple setup (Devcontainer, Codespaces)
+- Solve "reproducibility of a dashboard" via functional data engineering.
+- Solve "immutability of incrementally loaded data" via functional data engineering.
 - Get excited about the benefits of functional data engineering.
 
-INCLUDE mini GIF of going from "what data changed? I have no idea to => let me quickly check yesterdays data, => 
+[INCLUDE mini GIF of going from "what data changed? I have no idea to => let me quickly check yesterdays data, => ]
 
 ## Let's get started
 
+0. Open up a new codespace.
+
+<img src="open_codespaces.gif" width="400px" />
+
+Once inside codespaces: 
+
 1. Run ```./go``` to get started
 
+*If it doesn't work: Look inside the "go" file. If you don't want to work within the browser, feel free to clone and use ./go anyways.
+In that case, you'll need docker.* 
 
-## Inspect & run the DAG
-1. Take a look at the dag "user_data_dag". It imports orders & users from the sources. 
+---
+
+## (1) Inspect & run the DAG
+0. Run ``` ./day-1 ``` to start our working day.
+1. Take a look at the dag "user_data_dag" inside [users_orders.py](example_6/dags/load_data/users_orders.py). It imports orders & users from the sources. 
 
 <img src="dag_01.png" width="400px" />
 
-2. Trigger a DAG run (it should succeed), and then open up Jupyter at port 8888 (you get the token in the docker-compose start)
-3. Open up the work/order_status_chart notebook and take a look at the dashboard. Sales in both segments are growing slightly.
+2. Trigger a DAG run (it should succeed), and then open up Jupyter at port 8888 (you get the token in the docker-compose start).
+3. Open up the work/order_status_chart.ipynb notebook and take a look at the dashboard. Sales in both segments are growing slightly.
 
 <img src="dashboard_01.png" width="400px" />
 
-## Let's hit a problem with the user import
+---
+
+## (2) User import goes wrong
 Everything is looking good right? Let us progress to the next day then.
 
 1. Run ```./day-2```, then trigger the DAG again.
